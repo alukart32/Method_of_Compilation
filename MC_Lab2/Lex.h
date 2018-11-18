@@ -15,16 +15,21 @@ using namespace std;
 */
 
 // класс token
-enum { ID, STR, COND, ASG, DONE, WHILE, END_WH, ST_C, END_C, SPACE, ERR };
+enum { ID, STR, COND, ASG, DONE, WHILE, END_WH, ST_C, END_C, SPACE, ERR, END};
 
 class Lex {
 	// хранится ввод
 	string buffer;
+	// хранится набор token-ов
+	string tmpTokens;
 
+	// ошибка ввода
+	bool error = false;
 public:
 	// конструктор
 	Lex() {
 		buffer = string("");
+		tmpTokens = string("");
 	}
 
 	void readInput(string input) {
@@ -38,8 +43,8 @@ public:
 			будем получать по одному token в зависимости от послед. символов ("while" -> WH token, "whilr" -> ID token)
 		*/
 		int i = 0, tmp_class = 0;
-
-		bool error = false;
+		error = false;
+		tmpTokens = "";
 		while (i < buffer.length() && !error)
 		{
 			tmp_class = getTokenClass(buffer[i]);
@@ -48,27 +53,27 @@ public:
 			case SPACE:
 				break;
 			case ID:
-				i = readID(i + 1, error);
+				i = readID(i + 1);
 				break;
 
 			case STR:
-				i = readSTR(i + 1, error);
+				i = readSTR(i + 1);
 				break;
 
 			case ASG:
-				i = readASG(i + 1, error);
+				i = readASG(i + 1);
 				break;
 			case COND:
-				sendToken(COND);
+				addToken(COND);
 				break;
 			case ST_C:
-				sendToken(ST_C);
+				addToken(ST_C);
 				break;
 			case END_C:
-				sendToken(END_C);
+				addToken(END_C);
 				break;
 			case END_WH:
-				sendToken(END_WH);
+				addToken(END_WH);
 				break;
 			case ERR:
 				error = true;
@@ -76,6 +81,10 @@ public:
 			}
 			i++;
 		}
+		if (!error)
+			addToken(END);
+		else
+			errMsg();
 	}
 
 	int getTokenClass(char c) {
@@ -109,7 +118,7 @@ public:
 		return ERR;
 	}
 
-	int readID(int i, bool &error) {
+	int readID(int i) {
 		string tmp;
 		tmp += buffer[i - 1];
 		while ((isalpha(buffer[i]) || isalnum(buffer[i]) || buffer[i] == '_' || buffer[i] == '@') && i < buffer.length())
@@ -128,17 +137,17 @@ public:
 			return i;
 
 		if (tmp.compare("done") == 0)
-			sendToken(DONE);
+			addToken(DONE);
 		else
 			if (tmp.compare("while") == 0)
-				sendToken(WHILE);
+				addToken(WHILE);
 			else
-				sendToken(ID);
+				addToken(ID);
 
 		return --i;
 	}
 
-	int readSTR(int i, bool &error) {
+	int readSTR(int i) {
 		while (buffer[i] != '"' && i < buffer.length()) {
 			i++;
 		}
@@ -150,22 +159,27 @@ public:
 		if (error)
 			return i;
 
-		sendToken(STR);
+		addToken(STR);
 		return i;
 	}
 
-	int readASG(int i, bool &error) {
+	int readASG(int i) {
 		if (buffer[i] == '=')
-			sendToken(ASG);
+			addToken(ASG);
 		else
 			error = true;
 
 		return i;
 	}
 
-	void sendToken(int state) {
-		cout << getToken(state) << endl;
-		//return getToken(t, state);
+	void addToken(int state) {
+		tmpTokens += getToken(state);
+		// разделитель token = ' '
+		tmpTokens += " ";
+	}
+
+	string sendToken() {
+		return tmpTokens;
 	}
 
 	string getToken(int state) {
@@ -198,9 +212,19 @@ public:
 		case END_C:
 			return "END_C";
 			break;
-		case ERR:
-			return "ERR";
+		case END:
+			return "END";
 			break;
+
 		}
+	}
+
+	bool getErrFlag() {
+		return error;
+	}
+
+	void errMsg() {
+		cout << "ERR" << endl;
+		cout << "Current defined tokens in lex: " << tmpTokens;
 	}
 };

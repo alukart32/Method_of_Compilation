@@ -9,8 +9,7 @@ int main() {
 	/*
 		1) ввод последовательности пользователя
 			2) лексический анализатор -> token
-			3) синтаксический анализатор получает token
-			   запрос на след. token -> 2)
+			3) синтаксический анализатор получает набор token исходного ввода
 
 			входная строка закончилась или ( далее 2) )
 			программа завершилась:
@@ -20,14 +19,23 @@ int main() {
 
 	Lex l = Lex();
 
-	string s = string("d ; asd ;\"abc\"> while :=while=as;");
+	string s = string("; as , = :==>as<");//"d ; asd ;\"abc\"> while :=while=as;"
 
 	l.readInput(s);
 	l.lex();
 
+	if(!l.getErrFlag())
+		cout << l.sendToken();
 
+	cout << endl << endl;
+	s = string("; as = :==>as<");//"d ; asd ;\"abc\"> while :=while=as;"
 
-	cout << endl;
+	l.readInput(s);
+	l.lex();
+	if (!l.getErrFlag())
+		cout << l.sendToken();
+
+	cout << endl << endl;
 	system("pause");
 	return 0;
 }

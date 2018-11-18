@@ -116,6 +116,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Lex.h" />
+    <ClInclude Include="Parsing_LR.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
