@@ -2,6 +2,7 @@
 #include <string>
 
 #include "Lex.h"
+#include "Parsing_LR.h"
 
 using namespace std;
 
@@ -18,22 +19,18 @@ int main() {
 	*/
 
 	Lex l = Lex();
+	string s = string("; as = :==>as<");//"d ; asd ;\"abc\"> while :=while=as;"
 
-	string s = string("; as , = :==>as<");//"d ; asd ;\"abc\"> while :=while=as;"
-
-	l.readInput(s);
-	l.lex();
-
-	if(!l.getErrFlag())
-		cout << l.sendToken();
-
-	cout << endl << endl;
-	s = string("; as = :==>as<");//"d ; asd ;\"abc\"> while :=while=as;"
+	Parsing_LR parsing;
 
 	l.readInput(s);
 	l.lex();
 	if (!l.getErrFlag())
-		cout << l.sendToken();
+	{
+		parsing = Parsing_LR(l.sendToken());
+	}
+
+	cout << parsing.getToken();
 
 	cout << endl << endl;
 	system("pause");
