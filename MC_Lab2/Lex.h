@@ -1,4 +1,5 @@
 ﻿#include <string>
+#include <queue> 
 
 using namespace std;
 
@@ -15,13 +16,13 @@ using namespace std;
 */
 
 // класс token
-enum { ID, STR, COND, ASG, DONE, WHILE, END_WH, ST_C, END_C, SPACE, ERR, END};
+enum { ID, STR, COND, ASG, DONE, WHILE, END_WH, ST_C, END_C, SPACE, ERR, $};
 
 class Lex {
 	// хранится ввод
 	string buffer;
 	// хранится набор token-ов
-	string tmpTokens;
+	queue<int> tmpTokens;
 
 	// ошибка ввода
 	bool error = false;
@@ -29,7 +30,7 @@ public:
 	// конструктор
 	Lex() {
 		buffer = string("");
-		tmpTokens = string("");
+		tmpTokens = queue<int>();// <string>
 	}
 
 	void readInput(string input) {
@@ -44,7 +45,6 @@ public:
 		*/
 		int i = 0, tmp_class = 0;
 		error = false;
-		tmpTokens = "";
 		while (i < buffer.length() && !error)
 		{
 			tmp_class = getTokenClass(buffer[i]);
@@ -173,13 +173,27 @@ public:
 	}
 
 	void addToken(int state) {
-		tmpTokens += getToken(state);
-		// разделитель token = ' '
-		tmpTokens += " ";
+		tmpTokens.push(state);
 	}
 
-	string sendToken() {
+	queue<int> sendToken() {
 		return tmpTokens;
+	}
+
+	bool getErrFlag() {
+		return error;
+	}
+
+	void errMsg() {
+		cout << "ERR" << endl;
+		cout << "Current defined tokens in lex: ";
+		
+		while (!tmpTokens.empty())
+		{
+			string str = getToken(tmpTokens.front());
+			tmpTokens.pop();
+			cout << str << "  ";
+		}
 	}
 
 	string getToken(int state) {
@@ -217,14 +231,5 @@ public:
 			break;
 
 		}
-	}
-
-	bool getErrFlag() {
-		return error;
-	}
-
-	void errMsg() {
-		cout << "ERR" << endl;
-		cout << "Current defined tokens in lex: " << tmpTokens;
 	}
 };

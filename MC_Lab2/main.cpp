@@ -19,7 +19,7 @@ int main() {
 	*/
 
 	Lex l = Lex();
-	string s = string("; as = :==>as<");//"d ; asd ;\"abc\"> while :=while=as;"
+	string s = string("; ./as = :==>as<");//"d ; asd ;\"abc\"> while :=while=as;"
 
 	Parsing_LR parsing;
 
@@ -30,7 +30,7 @@ int main() {
 		parsing = Parsing_LR(l.sendToken());
 	}
 
-	cout << parsing.getToken();
+	parsing.printToken();
 
 	cout << endl << endl;
 	system("pause");
