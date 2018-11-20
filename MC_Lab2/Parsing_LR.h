@@ -7,18 +7,25 @@
 using namespace std;
 
 // одно из значений action(s, a) 
-enum actionOp{SHIFT, REDUCE, ACCEPT, ERR};
+enum actionOp{SHIFT, REDUCE, ACCEPT};
 
 class Parsing_LR {
-	stack <int>Stack;
-	queue<int> token;
+	stack <string>STACK;
+	// правила для управляющей таблицы
+	vector<string> RULE_TBL;
+	// полученные token-ы
+	queue<string> token;
 
 public:
 	Parsing_LR() {
-		token = queue<int>();
-	};;
+		token = queue<string>();
+		STACK = stack<string>();
+		RULE_TBL = vector<string>();
+	};
 
-	Parsing_LR(queue<int> str): token(str) {};
+	Parsing_LR(queue<string> str) : token(str) {};
+
+	Parsing_LR(queue<string> str, vector<string> vect): token(str), RULE_TBL(vect) {};
 
 	// управляющая программа
 	bool masterControlProgram() {
@@ -30,29 +37,30 @@ public:
 				// a – символ входной цепочки, на который указывает ip.
 
 			// берём элемент на вершине Stack
-			int s = Stack.top();
+			string s = STACK.top();
 			// берём первый token в очереди
-			int a = token.front();
+			string a = token.front();
 			token.pop();
 
 			if (action(s, a) == SHIFT)
 			{
-				Stack.push(a);
-				Stack.push(s);// тут новое состояние
+				STACK.push(a);
+				STACK.push(s);// тут новое состояние
 				ip++;
 			}
 			else if (action(s, a) == REDUCE)
 			{
 				//? наверно pop все token-ы образующие некоторое правило
 				//  b - число пар
-				for (i = 1; i<= b ; i++)
+				int b = 1; // для сборки проекта
+				for (int i = 1; i<= b ; i++)
 				{
-					Stack.pop();
-					Stack.pop();
+					STACK.pop();
+					STACK.pop();
 				}
 				// Пусть s’ – состояние на вершине магазина;
-				Stack.push(A);
-				Stack.push(Goto[s’, A]);
+				//STACK.push(A);
+				//STACK.push(Goto[s’, A]);
 				//Вывод правила(A→β);
 			}
 			else if (action(s, a) == ACCEPT)
@@ -69,7 +77,7 @@ public:
 
 	void error() {};
 
-	int action(int s, int a) {
+	int action(string s, string a) {
 		// скорее всего возвращает тип операции
 		actionOp operation;
 
@@ -81,58 +89,57 @@ public:
 		return operation;
 	};
 
-	void setToken(queue<int> str) {
+	void setToken(queue<string> str) {
 		token = str;
 	};;
 
-	queue<int> getToken() {
+	queue<string> getToken() {
 		return token;
 	};
 
 	void printToken() {
 		while (!token.empty())
 		{
-			string str = getToken(token.front());
+			string str = token.front();
 			token.pop();
 			cout << str << "  ";
 		}
 	};
 
-	string getToken(int state) {
-		switch (state)
-		{
-		case ID:
-			return "ID";
-			break;
-		case DONE:
-			return "DONE";
-			break;
-		case WHILE:
-			return "WHILE";
-			break;
-		case END_WH:
-			return "END_WH";
-			break;
-		case STR:
-			return "STR";
-			break;
-		case COND:
-			return "COND";
-			break;
-		case ASG:
-			return "ASG";
-			break;
-		case ST_C:
-			return "ST_C";
-			break;
-		case END_C:
-			return "END_C";
-			break;
-		case END:
-			return "END";
-			break;
+	//string getToken(int state) {
+	//	switch (state)
+	//	{
+	//	case ID:
+	//		return "ID";
+	//		break;
+	//	case DONE:
+	//		return "DONE";
+	//		break;
+	//	case WHILE:
+	//		return "WHILE";
+	//		break;
+	//	case END_WH:
+	//		return "END_WH";
+	//		break;
+	//	case STR:
+	//		return "STR";
+	//		break;
+	//	case COND:
+	//		return "COND";
+	//		break;
+	//	case ASG:
+	//		return "ASG";
+	//		break;
+	//	case ST_C:
+	//		return "ST_C";
+	//		break;
+	//	case END_C:
+	//		return "END_C";
+	//		break;
+	//	case END:
+	//		return "END";
+	//		break;
 
-		}
-	};
-
+	//	}
+	//};
 };
