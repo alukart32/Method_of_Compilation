@@ -21,13 +21,13 @@ int main() {
 	Lex l = Lex();
 	string s = string("; ./as = :==>as<");//"d ; asd ;\"abc\"> while :=while=as;"
 
-	Parsing_LR parsing;
+	Parsing_LL parsing;
 
 	l.readInput(s);
 	l.lex();
 	if (!l.getErrFlag())
 	{
-		parsing = Parsing_LR(l.sendToken());
+		parsing = Parsing_LL(l.sendToken());
 	}
 
 	parsing.printToken();

@@ -6,80 +6,16 @@
 
 using namespace std;
 
-// одно из значений action(s, a) 
-enum actionOp{SHIFT, REDUCE, ACCEPT, ERR};
-
-class Parsing_LR {
+class Parsing_LL {
 	stack <int>Stack;
 	queue<int> token;
 
 public:
-	Parsing_LR() {
+	Parsing_LL() {
 		token = queue<int>();
-	};;
-
-	Parsing_LR(queue<int> str): token(str) {};
-
-	// управляющая программа
-	bool masterControlProgram() {
-		// Установить ip на первый символ входной цепочки;
-		int ip = 0;
-		while (!token.empty())
-		{
-				// Пусть s – состояние на вершине магазина,
-				// a – символ входной цепочки, на который указывает ip.
-
-			// берём элемент на вершине Stack
-			int s = Stack.top();
-			// берём первый token в очереди
-			int a = token.front();
-			token.pop();
-
-			if (action(s, a) == SHIFT)
-			{
-				Stack.push(a);
-				Stack.push(s);// тут новое состояние
-				ip++;
-			}
-			else if (action(s, a) == REDUCE)
-			{
-				//? наверно pop все token-ы образующие некоторое правило
-				//  b - число пар
-				for (i = 1; i<= b ; i++)
-				{
-					Stack.pop();
-					Stack.pop();
-				}
-				// Пусть s’ – состояние на вершине магазина;
-				Stack.push(A);
-				Stack.push(Goto[s’, A]);
-				//Вывод правила(A→β);
-			}
-			else if (action(s, a) == ACCEPT)
-			{
-				return true;
-			}
-			else
-			{
-				// некое восстановление после ошибки 
-				error();
-			}
-		}
 	};
 
-	void error() {};
-
-	int action(int s, int a) {
-		// скорее всего возвращает тип операции
-		actionOp operation;
-
-		// необходимо опнять но основе top Stack и входного token a образуется ли свёрстка
-
-
-
-
-		return operation;
-	};
+	Parsing_LL(queue<int> str): token(str) {};
 
 	void setToken(queue<int> str) {
 		token = str;
@@ -127,9 +63,6 @@ public:
 			break;
 		case END_C:
 			return "END_C";
-			break;
-		case END:
-			return "END";
 			break;
 
 		}
