@@ -2,7 +2,7 @@
 #include <string>
 
 #include "Lex.h"
-#include "Parsing_LR.h"
+#include "Parsing_LL.h"
 
 using namespace std;
 
@@ -19,7 +19,7 @@ int main() {
 	*/
 
 	Lex l = Lex();
-	string s = string("; ./as = :==>as<");//"d ; asd ;\"abc\"> while :=while=as;"
+	string s = string("; as = :==>as<");//"d ; asd ;\"abc\"> while :=while=as;"
 
 	Parsing_LL parsing;
 

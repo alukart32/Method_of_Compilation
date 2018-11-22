@@ -22,7 +22,7 @@ class Lex {
 	// хранится ввод
 	string buffer;
 	// хранится набор token-ов
-	queue<int> tmpTokens;
+	queue<string> tmpTokens;
 
 	// ошибка ввода
 	bool error = false;
@@ -30,7 +30,7 @@ public:
 	// конструктор
 	Lex() {
 		buffer = string("");
-		tmpTokens = queue<int>();// <string>
+		tmpTokens = queue<string>();
 	}
 
 	void readInput(string input) {
@@ -82,7 +82,7 @@ public:
 			i++;
 		}
 		if (!error)
-			addToken(END);
+			addToken($);
 		else
 			errMsg();
 	}
@@ -173,10 +173,10 @@ public:
 	}
 
 	void addToken(int state) {
-		tmpTokens.push(state);
+		tmpTokens.push(getToken(state));
 	}
 
-	queue<int> sendToken() {
+	queue<string> sendToken() {
 		return tmpTokens;
 	}
 
@@ -190,7 +190,7 @@ public:
 		
 		while (!tmpTokens.empty())
 		{
-			string str = getToken(tmpTokens.front());
+			string str = tmpTokens.front();
 			tmpTokens.pop();
 			cout << str << "  ";
 		}
@@ -226,7 +226,7 @@ public:
 		case END_C:
 			return "END_C";
 			break;
-		case END:
+		case $:
 			return "END";
 			break;
 

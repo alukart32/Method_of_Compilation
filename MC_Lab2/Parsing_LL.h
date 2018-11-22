@@ -7,28 +7,32 @@
 using namespace std;
 
 class Parsing_LL {
-	stack <int>Stack;
-	queue<int> token;
+	vector<string> RULES;
+	vector<string> SELECT;
+	vector<string> FIRST;
+	vector<string> FOLLOW;
+	stack <string> Stack;
+	queue<string> token;
 
 public:
 	Parsing_LL() {
-		token = queue<int>();
+		token = queue<string>();
 	};
 
-	Parsing_LL(queue<int> str): token(str) {};
+	Parsing_LL(queue<string> str): token(str) {};
 
-	void setToken(queue<int> str) {
+	void setToken(queue<string> str) {
 		token = str;
 	};;
 
-	queue<int> getToken() {
+	queue<string> getToken() {
 		return token;
 	};
 
 	void printToken() {
 		while (!token.empty())
 		{
-			string str = getToken(token.front());
+			string str = token.front();
 			token.pop();
 			cout << str << "  ";
 		}
