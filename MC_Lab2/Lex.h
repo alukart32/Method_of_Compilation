@@ -16,7 +16,7 @@ using namespace std;
 */
 
 // класс token
-enum { ID, STR, COND, ASG, DONE, WHILE, END_WH, ST_C, END_C, SPACE, ERR, $};
+enum { ID, STR, COND, ASG, DONE, WHILE, END_WH, ST_C, END_C, SPACE, ERR};
 
 class Lex {
 	// хранится ввод
@@ -81,9 +81,7 @@ public:
 			}
 			i++;
 		}
-		if (!error)
-			addToken($);
-		else
+		if (error)
 			errMsg();
 	}
 
@@ -226,10 +224,6 @@ public:
 		case END_C:
 			return "END_C";
 			break;
-		case $:
-			return "END";
-			break;
-
 		}
 	}
 };

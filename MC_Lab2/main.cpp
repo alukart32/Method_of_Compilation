@@ -21,16 +21,15 @@ int main() {
 	Lex l = Lex();
 	string s = string("; as = :==>as<");//"d ; asd ;\"abc\"> while :=while=as;"
 
-	Parsing_LL parsing;
-
 	l.readInput(s);
 	l.lex();
 	if (!l.getErrFlag())
 	{
-		parsing = Parsing_LL(l.sendToken());
+		Parsing_LL  parsing = Parsing_LL(l.sendToken());
+		parsing.printToken();
 	}
 
-	parsing.printToken();
+	
 
 	cout << endl << endl;
 	system("pause");
