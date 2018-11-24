@@ -1,0 +1,4 @@
+﻿  main.cpp
+c:\users\aluka\onedrive\desktop\mc_ll_parsing\method_of_compilation-ll_parsing\mc_lab2\parsing_ll.h(106): warning C4390: ';': empty controlled statement found; is this the intent?
+c:\users\aluka\onedrive\desktop\mc_ll_parsing\method_of_compilation-ll_parsing\mc_lab2\lex.h(228): warning C4715: 'Lex::getToken': not all control paths return a value
+  MC_Lab2.vcxproj -> C:\Users\aluka\OneDrive\Desktop\MC_LL_parsing\Method_of_Compilation-LL_parsing\x64\Debug\MC_Lab2.exe

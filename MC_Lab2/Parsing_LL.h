@@ -19,7 +19,10 @@ class Parsing_LL {
 
 	// нетерминальные символы
 	vector<string> NON_TERMINAL;
+	
 	stack <string> Stack;
+
+	int M[6][9];
 
 	queue<string> token;
 
@@ -38,10 +41,9 @@ public:
 	};
 
 	void translate() {
-
 		Stack.push("$");
 		// добавим входной строке знак конца
-		token.push("&");
+		token.push("S");
 		// верхний символ Stack 
 		string X;
 		// текущий символ в Stack
@@ -66,8 +68,12 @@ public:
 					break;
 				}
 			}
-			else if(true){
+			else if(M[getNonTerminal(X)][getTerminal(X)]){
 
+			} 
+			else { 
+				error();
+				break;
 			}
 
 
@@ -94,6 +100,36 @@ public:
 			cout << str << "  ";
 		}
 	};
+
+	int getNonTerminal(string nts) {
+		int i = -1;
+
+		vector <string>v = vector<string>(NON_TERMINAL);
+		// используем итератор для перебора
+		for (std::vector<string>::iterator it = v.begin(); it != v.end(); ++it) {
+			if (it->compare(nts) == 0) {
+				i++;
+				return i;
+			}
+			i++;
+		}
+		return i;
+	}
+
+	int getTerminal(string nts) {
+		int i = -1;
+
+		vector <string>v = vector<string>(TERMINAL);
+		// используем итератор для перебора
+		for (std::vector<string>::iterator it = v.begin(); it != v.end(); ++it) {
+			if (it->compare(nts) == 0) {
+				i++;
+				return i;
+			}
+			i++;
+		}
+		return i;
+	}
 
 	bool isNonTerminal(string X) {
 		return true;
@@ -129,5 +165,4 @@ public:
 	void setNonTerminals() {
 
 	}
-
 };
