@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <stack>
 #include <queue> 
 #include <string>
@@ -7,20 +8,21 @@
 using namespace std;
 
 /*
-
 Пусть грамматика языка будет хранится как строка (необходимо при работе first и follow)
 
 Тогда таблица Table переход будет иметь вид
 
 номер нетерминала \ номер терминала
-			       |номер правила
+				   |номер правила
 
-номер терминала и нетерминала будем заранее знать enum TERM{ID DN WH END_WH STR CND ASG ST_C END_C} 
-												  enum NON_TERM{S, T, T`, ...}						
+номер терминала и нетерминала будем заранее знать enum TERM{ID DN WH END_WH STR CND ASG ST_C END_C}
+												  enum NON_TERM{S, T, T`, ...}
 
-будем их хранить в vector<string> а когда они нкжны будут то переводим в их код ! аккуратней с индексацией 
+будем их хранить в vector<string> а когда они нужны будут то переводим в их код ! аккуратней с индексацией
 
 в Stack будут string как терминалов, так и нетерминалов
+
+
 
 */
 class Parsing_LL {
@@ -30,6 +32,7 @@ class Parsing_LL {
 
 	vector<string> FIRST;
 	vector<string> FOLLOW;
+	vector<string> RULES;
 
 	// терминальные символы
 	vector<string> TERMINAL;
@@ -38,7 +41,7 @@ class Parsing_LL {
 	vector<string> NON_TERMINAL;
 	string non_term = "E E` T T` F";
 	vector<string> TERMINAL;
-	string term = "ID DN WH END_WH STR CND ASG ST_C END_C";
+	string term = "id dn wh e_wh str cnd asg st_c e_c";
 
 	stack <string> Stack;
 
@@ -128,99 +131,177 @@ public:
 	/*
 	Пример работы
 	   E  -> TE`
-	   E` -> +TE`|e			
+	   E` -> +TE`|q
 	   T  -> FT`
-	   T` -> *FT`|e
+	   T` -> *FT`|q
 	   F  ->(E) | id
-	   
-	   First(E)  = { (, id}			  // смотрим на то что у нас стоит в самом левом положении - T => надо сначала найти First(T)
-	   First(E`) = {+, e}			  // смотрим ... и видим что самый левая продукция будет + => заносим его, далее мы видим что для другой продукции
-								      // (это где e одно) там самое левое это e => заносим и его								
-	   First(T) =  { (, id}           // смотрим на то что у нас стоит в самом левом положении - F => надо сначала найти First(F)
-	   First(T`) = { *, e}	
-	   First(F) =  { (, id}
-	   
 
-
-
+	   5 First(E)  = { (, id}			  // смотрим на то что у нас стоит в самом левом положении - T => надо сначала найти First(T)
+	   1 First(E`) = {+, q}			  // смотрим ... и видим что самый левая продукция будет + => заносим его, далее мы видим что для другой продукции
+									  // (это где e одно) там самое левое это e => заносим и его
+	   4 First(T) =  { (, id}           // смотрим на то что у нас стоит в самом левом положении - F => надо сначала найти First(F)
+	   2 First(T`) = { *, q}
+	   3 First(F) =  { (, id}
 
 	   */
-	void first(string alpha) {
-		bool continue_wh = false;
-		do {
+	   
+	 /*
 		
-			continue_wh = false;
-			for (int i = 0; i < alpha.length(); i++)
-			{
-				for (int i = 0; i < ; i++)
-				{
+		1) смотрим правило:
+			a) если первый ЛЕВЫЙ элемент это терминал типа > < = := ; то добавляем
+			б) если есть переход в e то тоже добаляем (желательно в конец)
+		2) если составное ( E -> T E`), то необходимо запомнить, что надо вернуться к E	потом
+			в некую map
+						нетерминал тек. \ самый левый элемент | что зависит
+							  E  		|		   T		  |
+							  T 		|		   F		  |       E
 
-				}
+			будем идти вниз, занося в таблицы сложно составные продукции
+		3) проходим по каждому правилу
+			когда дойдем до конца будем реверсивно идти по таблице чтобы найти для них { }
+
+		
+	*/
+	struct first_item{
+		string first;
+		int index;
+	};
+
+	struct h_first_map {
+		string first;
+		// что зависит
+		string relt;
+		// индекс того нетерминала, у которого самый левый элемент непростой
+		int index;
+	};
+
+
+	void first() {
+		// используем итератор для перебора
+		vector <string>v = vector<string>(NON_TERMINAL);
+		int all_rules = RULES.size();
+
+		// массив полученных first
+		first_item *arr_fist = new first_item[all_rules];
+		int set_first = 0;
+
+		h_first_map *arr_h_first = new h_first_map[1];
+
+		// итератор для прохода по NON_TERMINAL
+		std::vector<string>::iterator it = v.begin(); 
+		// временный char
+		char c;
+
+		while (set_first != all_rules && it != v.end()) {
+			// пункт 1
+			// смотрим левый элемент
+			c = it->at(0);
+			// если всё ок, то можно проверить и на наличие как q, id, dn, wh, e_wh, str, cnd, asg, st_c, e_c
+			if (checkLeftFactor(c)) {
+				checkEnd(it);
 			}
 
-		} while (continue_wh);
+
+
+
+		}
+
 	}
 
+	bool checkLeftFactor(char c) {
+		switch (c){
+		case '<':
+		case '>':
+		// :=
+		case ':':
+		case '=':
+		case ';':
+		case '(':
+			return true;
+			break;
+		}
+		return false;
+	}
+
+	string checkEnd(string str) {
+		int i = 1;
+		while (i < str.length() && str[i]!='|') {
+			i++;
+		}
+		// дошли до того, что после |
+		// след. эл. за |
+		i++;
+
+		switch (str[i]) {
+		case 'q':
+			return "q";
+			break;
+		case 'i':
+		case 'd':
+		case 'e':
+		case 'w':
+		case 's':
+		case 'c':
+		case 'a':
+			string tmp;
+			tmp += str[i];
+			while (i < str.length()) {
+				tmp += str[i];
+				i++;
+			}
+
+			return tmp;
+			break;
+		}
+		return "";
+	}
 	/*
 	Пример работы
 	   E  -> TE`
-	   E` -> +TE`|e
+	   E` -> +TE`|q
 	   T  -> FT`
-	   T` -> *FT`|e
+	   T` -> *FT`|q
 	   F  ->(E) | id
-
 	   Правила
-	   
+
 	   1) Если A - это начальный символ вообще то помещаем $
 	   2) Если продукция B есть  α A или  α A β , где β переходит в e, то FOLLOW(A) = FOLLOW(B)
 	   3) Если продукция B есть  α A β, то FOLLOW(A) = FIRST(β)
-
 	   1)  FOLLOW(E) = {$}            // так как он начальный символ
-
 	   2)  FOLLOW(E`) = FOLLOW(E) | α A β |              =>  FOLLOW(T) = FIRST(E`)
-							      | + T E`| 
-
+								  | + T E`|
 		  !!! FOLLOW(T) = {+}	и FIRST(E`) !
-	   
+
 	   3)  FOLLOW(T) = {+}
 							| α A  β |              =>  FOLLOW(T`) = FOLLOW(T)
-							| F T`   | 
-
+							| F T`   |
 	   4)  FOLLOW(T`) = FOLLOW(T)
 							| α A  β |              =>  FOLLOW(F) = FIRST(T`)
-							| * F  T | 
-			
+							| * F  T |
+
 		   FOLLOW(F) = {*}
-	   
+
 	   5)   FOLLOW(F) = {*}
 						| α A β |              =>  FOLLOW(E) = FIRST( ) ) = )
 						| ( E ) |
-
 			!!!FOLLOW(E) = {$, )} !
-
 		далее расмотрим те продукции где происходит переход в e
-		
-	   6) E` -> +T
-						| α A β |              =>  FOLLOW(T) = FOLLOW(E`) 
-						| + T   |
-		  
-		  !!!FOLLOW(T`) = FOLLOW(T) и FOLLOW(E`) !
 
-       7) T` -> *F
+	   6) E` -> +T
+						| α A β |              =>  FOLLOW(T) = FOLLOW(E`)
+						| + T   |
+
+		  !!!FOLLOW(T`) = FOLLOW(T) и FOLLOW(E`) !
+	   7) T` -> *F
 						| α A β |              =>  FOLLOW(F) = FOLLOW(T`)
 						| * F   |
-
-         !!! FOLLOW(F) = {*} и FOLLOW(T`) !
-
-
+		 !!! FOLLOW(F) = {*} и FOLLOW(T`) !
 		  и тогда
-
 		FOLLOW(E) = { $, ) }
 		FOLLOW(E`) = FOLLOW(E) = { $, ) }
 		FOLLOW(T) = {+}	и FIRST(E`) = { +,$,) }
 		FOLLOW(T`) = FOLLOW(T) =   { +,$,) }
 		FOLLOW(F) = {*} и FOLLOW(T`) = {+,$,), *}
-
 	   */
 	void follow(string alpha) {
 		bool continue_wh = false;
@@ -294,7 +375,7 @@ public:
 		}
 	}
 
-	
+
 	int getNonTerminal(string nts) {
 		int i = -1;
 
@@ -324,7 +405,7 @@ public:
 		}
 		return i;
 	}
-	
+
 	queue<string> getToken() {
 		return token;
 	};
