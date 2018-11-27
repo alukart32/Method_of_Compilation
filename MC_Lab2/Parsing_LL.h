@@ -130,11 +130,11 @@ public:
 	// функции для построения таблицы
 	/*
 	Пример работы
-	   E  -> TE`
-	   E` -> +TE`|q
-	   T  -> FT`
-	   T` -> *FT`|q
-	   F  ->(E) | id
+	   0 E  -> TE`
+	   1 E` -> +TE`|q
+	   2 T  -> FT`
+	   3 T` -> *FT`|q
+	   4 F  ->(E) | id
 
 	   5 First(E)  = { (, id}			  // смотрим на то что у нас стоит в самом левом положении - T => надо сначала найти First(T)
 	   1 First(E`) = {+, q}			  // смотрим ... и видим что самый левая продукция будет + => заносим его, далее мы видим что для другой продукции
@@ -156,6 +156,10 @@ public:
 							  E  		|		   T		  |
 							  T 		|		   F		  |       E
 
+
+			а лучше будем хранить таблицу правил и отмечать которые прошли сразу
+
+
 			будем идти вниз, занося в таблицы сложно составные продукции
 		3) проходим по каждому правилу
 			когда дойдем до конца будем реверсивно идти по таблице чтобы найти для них { }
@@ -170,42 +174,113 @@ public:
 	struct h_first_map {
 		string first;
 		// что зависит
-		string relt;
+		int relt;
 		// индекс того нетерминала, у которого самый левый элемент непростой
 		int index;
 	};
 
-
 	void first() {
 		// используем итератор для перебора
 		vector <string>v = vector<string>(NON_TERMINAL);
-		int all_rules = RULES.size();
+		int rule_amont = RULES.size();
 
-		// массив полученных first
-		first_item *arr_fist = new first_item[all_rules];
-		int set_first = 0;
+		//// массив полученных first
+		first_item *arr_fist = new first_item[rule_amont];
+		//int set_first = 0;
 
-		h_first_map *arr_h_first = new h_first_map[1];
+		
 
 		// итератор для прохода по NON_TERMINAL
 		std::vector<string>::iterator it = v.begin(); 
 		// временный char
+
 		char c;
 
-		while (set_first != all_rules && it != v.end()) {
+		// массив пройденных нетерминалов (их индексы = индекс в массиве, значение true - пройден нетерминал с индексом i)
+		bool *arr_of_checked_rules = new bool[rule_amont];
+		
+	
+		
+		string tmp_first;
+		int i = 0;
+		int amountOfComposNT = 0;
+		// для начала определим FIRST для быстро определяемых
+		while ( i < rule_amont && it != v.end()) {
 			// пункт 1
 			// смотрим левый элемент
-			c = it->at(0);
+
+			// всё что за ::
+			c = getLeftSym(it);
+
 			// если всё ок, то можно проверить и на наличие как q, id, dn, wh, e_wh, str, cnd, asg, st_c, e_c
 			if (checkLeftFactor(c)) {
-				checkEnd(it);
+				tmp_first += c;
+				if (checkEnd(it).compare("") != 0)
+					tmp_first += checkEnd(it);
+
+				arr_of_checked_rules[i] = true;
+				arr_fist[i].first = tmp_first;
+				tmp_first = "";
+
 			}
-
-
-
-
+			else {
+				amountOfComposNT++;
+			}
 		}
 
+		i = 0;
+		int l = 0;
+		vector <string>vt = vector<string>(NON_TERMINAL);
+		h_first_map *arr_h_first = new h_first_map[amountOfComposNT];
+
+
+		// определим FIRST для составных
+		while (amountOfComposNT !=0 && it != vt.end()) {
+			// пункт 2
+			// для тех кто сотавной слева элемент имеет
+			if (arr_of_checked_rules[i] == false) {
+				l = getLeftNonTermPos(it);
+				if (l != -1) {
+					// запомним индекс того правила у которого самый левый нетерминал
+					arr_h_first[i].index = i;
+					// запомним индекс этого нетерминала
+					arr_h_first[i].relt = l;
+				}
+			}
+		}
+
+	}
+
+	int getLeftNonTermPos(vector<string>::iterator it) {
+		// выделим нетерминал E` до ::  E::TR или E`::YU
+		string tmp;
+		if (it->at(3) != ':')
+			tmp += it->at(3);
+		else
+			tmp += it->at(4);
+
+		vector <string>v = vector<string>(RULES);
+		vector<string>::iterator t = v.begin();
+
+		for (int i = 0; t != v.end(); ++t) {
+			if (t->compare(tmp) == 0) {
+				return i;
+			}
+			i++;
+		}
+
+		return -1;
+	}
+
+	char getLeftSym(vector<string>::iterator it) {
+		char c;
+
+		// E::+FG или E`::YH может быть правило
+		if (it->at(3) != ':')
+			c = it->at(3);
+		else
+			c = it->at(4);
+		return c;
 	}
 
 	bool checkLeftFactor(char c) {
@@ -223,16 +298,16 @@ public:
 		return false;
 	}
 
-	string checkEnd(string str) {
+	string checkEnd(vector<string>::iterator it) {
 		int i = 1;
-		while (i < str.length() && str[i]!='|') {
+		while (i < it->length() && it->at(i) != '|') {
 			i++;
 		}
 		// дошли до того, что после |
 		// след. эл. за |
 		i++;
 
-		switch (str[i]) {
+		switch (it->at(i)) {
 		case 'q':
 			return "q";
 			break;
@@ -244,9 +319,9 @@ public:
 		case 'c':
 		case 'a':
 			string tmp;
-			tmp += str[i];
-			while (i < str.length()) {
-				tmp += str[i];
+			tmp += it->at(i);
+			while (i < it->length()) {
+				tmp += it->at(i);
 				i++;
 			}
 
