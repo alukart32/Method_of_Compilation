@@ -13,5 +13,95 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Table">
+      <UniqueIdentifier>{e3387cc0-3976-4322-8a71-b11dd2cd7583}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Rule">
+      <UniqueIdentifier>{cfc7b7c3-3c94-4767-ae4e-7efaa731dfe6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lexer">
+      <UniqueIdentifier>{5b072477-466f-423b-857b-b337794326ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Table\Cell">
+      <UniqueIdentifier>{8ccb03ff-0f00-4e1a-8627-f968ecd79e51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Parser">
+      <UniqueIdentifier>{7d2ca000-0a54-4d77-b307-9243ef022bf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Symbols">
+      <UniqueIdentifier>{711f0b7e-137c-4729-9790-adc87f05b3e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\IN_OUT_DATA">
+      <UniqueIdentifier>{63603206-965d-4312-99d5-7651f5362170}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mask">
+      <UniqueIdentifier>{92a77176-fa7b-4093-941b-21ea8b3d1e8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Table\Sets">
+      <UniqueIdentifier>{c7ba3e4b-cc39-4139-9d58-f6e8cdf15594}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Table\Sets\First">
+      <UniqueIdentifier>{1aa1c8d3-de51-4534-998e-b7b0c4f2dd02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Table\Sets\Follow">
+      <UniqueIdentifier>{7f428b41-5ab3-4cc0-9860-af8fb056cd02}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Table.h">
+      <Filter>Header Files\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="First.h">
+      <Filter>Header Files\Table\Sets\First</Filter>
+    </ClInclude>
+    <ClInclude Include="Follow.h">
+      <Filter>Header Files\Table\Sets\Follow</Filter>
+    </ClInclude>
+    <ClInclude Include="Rule.h">
+      <Filter>Header Files\Rule</Filter>
+    </ClInclude>
+    <ClInclude Include="Lex.h">
+      <Filter>Header Files\Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="Cell.h">
+      <Filter>Header Files\Table\Cell</Filter>
+    </ClInclude>
+    <ClInclude Include="LL.h">
+      <Filter>Header Files\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="NonTerm.h">
+      <Filter>Header Files\Symbols</Filter>
+    </ClInclude>
+    <ClInclude Include="Symbol.h">
+      <Filter>Header Files\Symbols</Filter>
+    </ClInclude>
+    <ClInclude Include="Term.h">
+      <Filter>Header Files\Symbols</Filter>
+    </ClInclude>
+    <ClInclude Include="InputData.h">
+      <Filter>Header Files\IN_OUT_DATA</Filter>
+    </ClInclude>
+    <ClInclude Include="Output.h">
+      <Filter>Header Files\IN_OUT_DATA</Filter>
+    </ClInclude>
+    <ClInclude Include="Mask.h">
+      <Filter>Header Files\Mask</Filter>
+    </ClInclude>
+    <ClInclude Include="DataForTable.h">
+      <Filter>Header Files\Table\Sets</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Grammar.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Term.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

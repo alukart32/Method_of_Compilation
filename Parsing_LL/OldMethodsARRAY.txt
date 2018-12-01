@@ -1,0 +1,350 @@
+﻿	InputData
+
+	Rule*    readRules();
+	NonTerm* setNonTerm(Rule* rules);
+	Term*    setTerm();
+
+	Rule*         getRules() { return rules; }
+	Term*         getTerm() { return term; }
+	NonTerm*	  getNonTerm() { return nTerm; }
+
+	//Rule* InputData::readRules()
+//{
+//	// открытие файла
+//	//cout << "Grammar File: ";
+//	//string fileName;
+//	//cin >> fileName;
+//
+//	ifstream inFile("Grammar.txt");
+//
+//	if (!inFile.is_open()) 
+//	{ 
+//		cout << "File not found"; 
+//		err_read_rules = true;
+//	}
+//	else {
+//
+//		// определим число правил
+//
+//		string str;
+//		rules_size = 0;
+//
+//		while (!inFile.eof()) {
+//			getline(inFile, str);
+//			rules_size++;
+//		}
+//
+//		inFile.close();
+//
+//		Rule *new_rules = new Rule[rules_size];
+//
+//		// запишим эти правила
+//
+//		inFile.open("Grammar.txt");
+//
+//		// индекс правила
+//		int i = 0;
+//		while (!inFile.eof()) {
+//			getline(inFile, str);
+//
+//			new_rules[i].setRule(str);
+//			new_rules[i].setIndex(i);
+//			i++;
+//		}
+//
+//		return new_rules;
+//	}
+//
+//	return new Rule[0];
+//};
+
+//
+//// считываем у каждлгл правила всё то, что до разделителя :: 
+//NonTerm* InputData::setNonTerm(Rule* rules)
+//{
+//	NonTerm *tmpNonTerm = new NonTerm[rules_size];
+//	string tmp;
+//	for (size_t i = 0; i < rules_size; i++)
+//	{
+//		// считываем
+//		tmp = "";
+//		int j = 0;
+//		while (rules[i].getRuleBody().at(j) != ':')
+//		{
+//			tmp += rules[i].getRuleBody().at(j);
+//			j++;
+//		}
+//
+//		// записываем
+//		tmpNonTerm[i].setSymbol(tmp);
+//		tmpNonTerm[i].setIndex(i);
+//	}
+//
+//	return tmpNonTerm;
+//};
+
+/*
+// определим множество терминалов вручнкю - ! индекс это позиция столбца в таблице
+Term* InputData::setTerm()
+{
+
+	// открытие файла
+	//cout << "Term File: ";
+	//string fileName;
+	//cin >> fileName;
+
+	ifstream inFile("Term.txt");
+
+	if (!inFile.is_open())
+	{
+		cout << "File not found";
+		err_set_terms = true;
+	}
+	else {
+
+		// определим число term
+
+		string str;
+		terms_size = 0;
+
+		while (!inFile.eof()) {
+			getline(inFile, str);
+			terms_size++;
+		}
+
+		inFile.close();
+
+		Term* tmpTerm = new Term[terms_size];
+
+		// запишим эти token
+
+		inFile.open("Term.txt");
+
+		// индекс token
+		int i = 0;
+		while (!inFile.eof()) {
+			getline(inFile, str);
+
+			tmpTerm[i].setSymbol(str);
+			tmpTerm[i].setIndex(i);
+			i++;
+		}
+
+		return tmpTerm;
+	}
+
+	return new Term[0];
+};
+*/
+
+
+DataForTable
+
+//// получаем индекс правила, соответствующий нетерминалу A
+//int DataForTable::getRuleAIndex(string A, Rule *set_rules)
+//{
+//	// поиск по всем правилам
+//	int index = 0;
+//
+//	int j = 0;
+//	string tmp;
+//	char c = ' ';
+//
+//	for (size_t i = 0; i < rules_size; i++)
+//	{
+//		c = set_rules[i].getRuleBody().at(j);
+//		while (c != ':' && c != ' ')
+//		{
+//			if (c != ' ')
+//			{
+//				tmp += c;
+//				j++;
+//
+//				c = set_rules[i].getRuleBody().at(j);
+//				if (c == ':' || c == ' ')
+//					break;
+//			}
+//			j++;
+//		}
+//		if (A.compare(tmp) == 0)
+//		{
+//			index = i;
+//			break;
+//		}
+//		j = 0;
+//		tmp = "";
+//	}
+//	return index;
+//};
+
+//
+//// нахождение множество FOLLOW
+//FOLLOW* DataForTable::findFollow(Rule *p_rules)
+//{
+//	// будем использовать маску на правило alpha A beta
+//	/*
+//
+//		если первый символ A, то FOLLOW(A)+= $
+//
+//	1) если beta == 0 или beta == ..., но вправиле eсть eps(переход в никуда), то FOLLOW(A)+=FOLLOW(B)
+//	2) если	beta == ... и eps == 0, то FOLLOW(A)+=FIRST(beta)
+//
+//	*/
+//
+//	FOLLOW *tmp_arr_follow = new FOLLOW[rules_size];
+//
+//	Mask mask;
+//	// для первого символа добавляем $
+//	tmp_arr_follow[0].setBody("$");
+//	tmp_arr_follow[0].setRuleIndex(0);
+//
+//	// этап 1: проход по всем правилам без перехода по eps в правилах (E:: +TE`| eps то берём сначала E:: +TE` в рассмотрение )
+//	for (size_t i = 0; i < rules_size; i++)
+//	{
+//		mask = getMask(p_rules[i]);
+//
+//		// определим дальнейшие действия
+//
+//		// если beta = 0 , то FOLLOW(A) += FOLLOW(B), B - текущее правило
+//		if (mask.getBeta() == "")
+//		{
+//			// запишем FOLLOW(B) в FOLLOW(A)
+//			// получим индекс правила  и запишем зависимость
+//			tmp_arr_follow[getRuleAIndex(mask.getA(), p_rules)].setReferFollow(i);
+//
+//		}
+//		else
+//		{
+//			// 	beta == ... , FOLLOW(A)+=FIRST(beta)
+//			tmp_arr_follow[getRuleAIndex(mask.getA(), p_rules)].setReferFirst(i);
+//		}
+//
+//
+//
+//	}
+//	// часть 2: у тех правил, имеющие eps определим и FOLLOW(A) += FOLLOW(B)
+//
+//	for (size_t i = 0; i < rules_size; i++)
+//	{
+//		// ищем те правила, у которых beta == ... , FOLLOW(A)+=FIRST(beta)
+//		if (tmp_arr_follow[i].getReferFirst() != -1)
+//		{
+//			// проверим на наличие eps
+//			if (checkForEpsilon(p_rules[i]))
+//			{
+//				// есть eps, то FOLLOW(A) += FOLLOW(B)
+//				tmp_arr_follow[getRuleAIndex(mask.getA(), p_rules)].setReferFollow(i);
+//			}
+//		}
+//	}
+//
+//
+//	// часть 3: присвоение значений
+//	// временный буферы
+//	string tmp_first;
+//	string tmp_follow;
+//
+//	for (size_t i = 0; i < rules_size; i++)
+//	{
+//		// смотрим по индексам refFollow и refFirst и по ним присваиваем значение
+//		if (tmp_arr_follow[i].getReferFirst() != -1)
+//		{
+//			tmp_first = first[tmp_arr_follow[i].getReferFirst()].getBody();
+//			tmp_arr_follow[i].setBody(tmp_first + " , ");
+//		}
+//
+//		if (tmp_arr_follow[i].getReferFollow() != -1)
+//		{
+//			tmp_first = tmp_arr_follow[tmp_arr_follow[i].getReferFollow()].getBody();
+//			tmp_arr_follow[i].setBody(tmp_follow + " , ");
+//		}
+//	}
+//	return tmp_arr_follow;
+//};
+
+
+
+//
+//// нахождение множество FIRST
+//FIRST* DataForTable::findFirst(Rule *p_rules) {
+//	FIRST *first = new FIRST[rules_size];
+//
+//	// часть первая: проход по всем правилам, для которых можно установить FIRST
+//
+//	string tmp;
+//	// временный буфер для first
+//	string buffer = "";
+//
+//	for (size_t i = 0; i < rules_size; i++)
+//	{
+//		// проверим символ после ::
+//		// получим его
+//
+//		// индекс, на который оканчивается самый левый элемент
+//		int endLeftSymbol = 0;
+//		tmp = getLeftSymbol(p_rules[i], endLeftSymbol);
+//
+//
+//		if (isTerm(tmp)) {
+//			buffer += tmp;
+//			// теперь ищем другие терминалы, если возвращаемая строка не "" то дабавляем её
+//			tmp = getSomeMoreTerm(p_rules[i], endLeftSymbol);
+//			if (tmp != "")
+//				buffer += " , " + tmp;
+//
+//			first[i].setBody(buffer);
+//			first[i].setRuleIndex(i);
+//			first[i].setCreated(true);
+//			buffer = "";
+//		}
+//	}
+//
+//	// часть вторая: проход по оставшимся правилам
+//
+//	// индекс для правил, которые будем искать для определения first i-ого правила
+//	int j = 0;
+//	// создан ли i first
+//	bool created = false;
+//
+//	string tmp_i;
+//	string tmp_j;
+//
+//	int i = rules_size - 1;
+//	for (; i > -1; i--)
+//	{
+//		// проверка на то, а был ли first для правила i создан
+//		// если false то смотрим вниз по правилам, находим соответствующее и записываем first 
+//		if (!first[i].isCreate())
+//		{
+//			tmp_i = getLeftSymbol(p_rules[i], j);// передача j неважно
+//			// проход вниз по правилам
+//			for (size_t j = i + 1; j < rules_size; j++)
+//			{
+//				tmp_j = nonTerms[j].getSymbol();
+//				// определяем j правило это правило, которое ищем
+//				if (tmp_i.compare(tmp_j) == 0)
+//				{
+//
+//					first[i].setBody(first[j].getBody());
+//					first[i].setRuleIndex(i);
+//					first[i].setCreated(true);
+//					break;
+//				}
+//			}
+//		}
+//	}
+//
+//
+//	return first;
+//};
+
+
+//// передаём массив правил, так удобней чем vector
+//void DataForTable::setData(Rule *new_rules)
+//{
+//	// создадим множества  
+//	first = findFirst(new_rules);
+//	follow = findFollow(new_rules);
+//
+//};
+

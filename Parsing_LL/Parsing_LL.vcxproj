@@ -18,6 +18,29 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Cell.h" />
+    <ClInclude Include="DataForTable.h" />
+    <ClInclude Include="First.h" />
+    <ClInclude Include="Follow.h" />
+    <ClInclude Include="InputData.h" />
+    <ClInclude Include="Lex.h" />
+    <ClInclude Include="LL.h" />
+    <ClInclude Include="Mask.h" />
+    <ClInclude Include="NonTerm.h" />
+    <ClInclude Include="Output.h" />
+    <ClInclude Include="Rule.h" />
+    <ClInclude Include="Table.h" />
+    <ClInclude Include="Symbol.h" />
+    <ClInclude Include="Term.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Grammar.txt" />
+    <Text Include="Term.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{E06086E9-3249-4207-A9FC-862BD7BD5CA4}</ProjectGuid>
@@ -114,8 +137,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

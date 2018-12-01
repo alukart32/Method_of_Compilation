@@ -1,0 +1,5 @@
+E:: T E`
+E`:: + T E` | eps
+T:: F T`
+T`:: * F T` | eps
+F:: ( E ) | id
